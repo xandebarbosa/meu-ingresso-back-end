@@ -1,0 +1,34 @@
+import { nanoid } from 'nanoid';
+import { NextFunction, Request, Response } from 'express';
+
+import { APIResponse } from '../../../services';
+import { schemaCreate } from './schemas';
+
+export const validateBodyForCreate = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    if (req.method !== 'POST') {
+        res.status(405).json({
+            code: 'airdrop.api.profile.validateBodyForCreate.failed',
+            message: '',
+            transaction: nanoid(),
+        } as APIResponse);
+
+        return;
+    }
+
+    try {
+        req.body = schemaCreate.parse(req.body);
+
+        next();
+    } catch (error: Error | any) {
+        res.status(400).json({
+            code: 'airdrop.api.profile.validateBodyForCreate.failed',
+            message: error?.message,
+            transaction: nanoid(),
+            args: error,
+        } as APIResponse);
+    }
+};
