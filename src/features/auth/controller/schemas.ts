@@ -6,5 +6,5 @@ export const schemaValidationForRequest = z.object({
 
 export const schemaValidationForToken = z.object({
     username: z.string(),
-    code: z.string(),
+    code: z.string().length(6),
 });
