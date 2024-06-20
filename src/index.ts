@@ -21,7 +21,7 @@ uniqueExecution({
     callback: () => {
         // the unique point of code who knows about all features
         app.use(features.events.controller.router);
-        // app.use(features.users.controller.router);
+        app.use(features.users.controller.router);
         // app.use(features.tickets.controller.router);
         // app.use(features.buffet.controller.router);
 

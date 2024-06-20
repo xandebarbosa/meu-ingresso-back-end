@@ -9,7 +9,7 @@ const logger = debug('services:migration');
 logger('Starting migration');
 
 lockResource({
-    resourceName: 'airdrop.api.migration',
+    resourceName: 'myTickets.api.migration',
     callback: () =>
         startMigration({
             migrationPath: join(__dirname, '..', '..', 'migrations'),

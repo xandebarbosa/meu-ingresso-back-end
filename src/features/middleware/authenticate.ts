@@ -13,7 +13,7 @@ export const authenticate = (
 
     if (!token) {
         res.status(401).json({
-            code: 'airdrop.api.auth.token.missing',
+            code: 'myTickets.api.auth.token.missing',
             message: 'Token is missing',
             transaction: nanoid(),
             data: {},
@@ -28,7 +28,7 @@ export const authenticate = (
         next();
     } catch (error) {
         res.status(401).json({
-            code: 'airdrop.api.auth.token.invalid',
+            code: 'myTickets.api.auth.token.invalid',
             message: 'Token is invalid',
             transaction: nanoid(),
             data: {},
