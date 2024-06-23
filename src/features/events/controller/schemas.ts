@@ -13,3 +13,5 @@ export const schemaCreate = z.object({
         country: z.string().min(2).max(2),
     }),
 });
+
+export const schemaUpdate = schemaCreate.partial();

@@ -2,7 +2,7 @@ import debug from 'debug';
 import { nanoid } from 'nanoid';
 import { Router } from 'express';
 import * as model from '../model';
-import { validateBodyForCreate } from './rules';
+import { validateBodyForCreate, validateBodyForUpdate } from './rules';
 import { APIResponse } from '../../../services';
 
 const logger = debug('features:buffet:controller');
@@ -44,6 +44,28 @@ route.post('/', validateBodyForCreate, async (req, res) => {
         res.status(500).json({
             code: 'myTickets.api.buffet.create.failed',
             message: `buffet create failed: ${error}`,
+            args: error,
+            transaction: nanoid(),
+        } as APIResponse);
+    }
+});
+
+route.put('/:id', validateBodyForUpdate, async (req, res) => {
+    try {
+        const { id } = req.params;
+        await model.updateBuffetById(id, req.body);
+
+        res.json({
+            code: 'myTickets.api.buffet.update.success',
+            message: 'buffet update success',
+            transaction: nanoid(),
+            data: true,
+        } as APIResponse<boolean>);
+    } catch (error) {
+        logger('update buffet failed: %0', error);
+        res.status(500).json({
+            code: 'myTickets.api.buffet.update.failed',
+            message: `buffet update failed: ${error}`,
             args: error,
             transaction: nanoid(),
         } as APIResponse);
