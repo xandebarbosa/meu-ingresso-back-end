@@ -1,6 +1,9 @@
 export interface CreateTicketsParams {
-    price: number;
     eventId: string;
     userId: string;
-    qrcode: string;
+}
+
+export interface ReserveTicketsParams {
+    eventId: string;
+    userId: string;
 }

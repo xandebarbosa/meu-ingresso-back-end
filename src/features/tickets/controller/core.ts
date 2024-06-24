@@ -2,8 +2,10 @@ import debug from 'debug';
 import { nanoid } from 'nanoid';
 import { Router } from 'express';
 import * as model from '../model';
+import * as modelEvent from '../../events/model';
 import { validateBodyForCreate } from './rules';
 import { APIResponse } from '../../../services';
+import { authenticate } from '../../middleware/authenticate';
 
 const logger = debug('features:tickets:controller');
 const route = Router();
@@ -29,9 +31,40 @@ route.get('/', async (req, res) => {
     }
 });
 
-route.post('/', validateBodyForCreate, async (req, res) => {
+route.post('/', authenticate, validateBodyForCreate, async (req, res) => {
     try {
-        await model.createTickets(req.body);
+        const { userId } = req.auth;
+        const { eventId } = req.body;
+
+        const event = await modelEvent.getEventById(eventId);
+
+        if (!event) {
+            res.status(404).json({
+                code: 'myTickets.api.tickets.create.failed',
+                message: 'event not found',
+                transaction: nanoid(),
+            } as APIResponse);
+
+            return;
+        }
+
+        if (event.ticket.countAvailable === 0) {
+            res.status(400).json({
+                code: 'myTickets.api.tickets.create.failed',
+                message: 'no tickets available',
+                transaction: nanoid(),
+            } as APIResponse);
+
+            return;
+        }
+
+        // reservar o ticket para o usuario
+        await model.reserveTicket({
+            eventId,
+            userId,
+        });
+
+        // dispatch para meio de pagamento
 
         res.json({
             code: 'myTickets.api.tickets.create.success',

@@ -1,9 +1,11 @@
 import debug from 'debug';
 import { customAlphabet, nanoid } from 'nanoid';
 import { Router } from 'express';
+import jwt from 'jsonwebtoken';
 import { APIResponse } from '../../../services';
 import { validateBodyForRequest, validateBodyForToken } from './rules';
 import * as model from '../../users/model';
+import { JWT_SECRETKEY } from '../../../constants';
 
 const logger = debug('features:auth:controller');
 const route = Router();
@@ -54,8 +56,11 @@ route.post('/token', validateBodyForToken, async (req, res) => {
 
         if (!user) throw new Error('User not found');
 
-        // gere token
-        // clear code
+        const token = jwt.sign({ userId: user._id.toString() }, JWT_SECRETKEY);
+
+        await model.updateUserById(user._id.toString(), {
+            'access.code': null,
+        });
 
         res.status(200).json({
             code: 'myTickets.api.auth.login.success',
@@ -63,7 +68,7 @@ route.post('/token', validateBodyForToken, async (req, res) => {
             transaction: nanoid(),
             data: {
                 user,
-                token: '',
+                token,
             },
         } as APIResponse<{
             user: model.UsersDocument;

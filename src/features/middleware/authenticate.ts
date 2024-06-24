@@ -24,7 +24,7 @@ export const authenticate = (
 
     try {
         const decoded = jwt.verify(token, JWT_SECRETKEY);
-        req.auth = { wallet: (decoded as any).auth.wallet };
+        req.auth = { userId: (decoded as { userId: string }).userId };
         next();
     } catch (error) {
         res.status(401).json({

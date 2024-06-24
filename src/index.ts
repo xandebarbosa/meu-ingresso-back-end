@@ -24,7 +24,7 @@ uniqueExecution({
         app.use(features.users.controller.router);
         app.use(features.tickets.controller.router);
         app.use(features.buffet.controller.router);
-
+        app.use(features.webhook.controller.router);
         app.use(features.auth.controller.router);
     },
     advanced: {

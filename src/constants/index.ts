@@ -8,3 +8,4 @@ export * from './express';
 export * from './sentry';
 export * from './mongo';
 export * from './rabbitmq';
+export * from './stripe';
