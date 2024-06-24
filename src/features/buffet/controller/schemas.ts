@@ -7,3 +7,5 @@ export const schemaCreate = z.object({
     available: z.boolean(),
     category: z.string().min(3).max(255),
 });
+
+export const schemaUpdate = schemaCreate.partial();

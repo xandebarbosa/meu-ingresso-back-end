@@ -2,7 +2,7 @@ import debug from 'debug';
 import { nanoid } from 'nanoid';
 import { Router } from 'express';
 import * as model from '../model';
-import { validateBodyForCreate } from './rules';
+import { validateBodyForCreate, validateBodyForUpdate } from './rules';
 import { APIResponse } from '../../../services';
 
 const logger = debug('features:events:controller');
@@ -44,6 +44,28 @@ route.post('/', validateBodyForCreate, async (req, res) => {
         res.status(500).json({
             code: 'myTickets.api.events.create.failed',
             message: `events create failed: ${error}`,
+            args: error,
+            transaction: nanoid(),
+        } as APIResponse);
+    }
+});
+
+route.put('/:id', validateBodyForUpdate, async (req, res) => {
+    try {
+        const { id } = req.params;
+        await model.updateEventById(id, req.body);
+
+        res.json({
+            code: 'myTickets.api.events.update.success',
+            message: 'events update success',
+            transaction: nanoid(),
+            data: true,
+        } as APIResponse<boolean>);
+    } catch (error) {
+        logger('update events failed: %0', error);
+        res.status(500).json({
+            code: 'myTickets.api.events.update.failed',
+            message: `events update failed: ${error}`,
             args: error,
             transaction: nanoid(),
         } as APIResponse);

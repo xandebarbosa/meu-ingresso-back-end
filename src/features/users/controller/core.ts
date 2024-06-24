@@ -4,7 +4,7 @@ import { Router } from 'express';
 import * as model from '../model';
 
 import { APIResponse } from '../../../services';
-import { validateBodyForCreate } from './rules';
+import { validateBodyForCreate, validateBodyForUpdate } from './rules';
 
 const logger = debug('features:users:controller');
 const route = Router();
@@ -44,6 +44,28 @@ route.post('/', validateBodyForCreate, async (req, res) => {
         res.status(500).json({
             code: 'myTickets.api.users.create.failed',
             message: `create users failed: ${error}`,
+            args: error,
+            transaction: nanoid(),
+        } as APIResponse);
+    }
+});
+
+route.put('/:id', validateBodyForUpdate, async (req, res) => {
+    try {
+        const { id } = req.params;
+        await model.updateUserById(id, req.body);
+
+        res.json({
+            code: 'myTickets.api.users.update.success',
+            message: 'users update success',
+            transaction: nanoid(),
+            data: true,
+        } as APIResponse<boolean>);
+    } catch (error) {
+        logger('update users failed: %0', error);
+        res.status(500).json({
+            code: 'myTickets.api.users.update.failed',
+            message: `users update failed: ${error}`,
             args: error,
             transaction: nanoid(),
         } as APIResponse);

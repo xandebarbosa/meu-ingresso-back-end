@@ -11,3 +11,5 @@ export const schemaCreate = z.object({
         code: z.string().default(''),
     }),
 });
+
+export const schemaUpdate = schemaCreate.partial();
